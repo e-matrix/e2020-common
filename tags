@@ -7,8 +7,10 @@
 Common	lib/common.ex	/^defmodule Common do$/;"	m
 CommonTest	test/common_test.exs	/^defmodule CommonTest do$/;"	m
 MixProject	mix.exs	/^defmodule Common.MixProject do$/;"	m
+Payload	lib/common/payload.ex	/^defmodule Common.Payload do$/;"	m
 application	mix.exs	/^  def application do$/;"	f
+build_signed_jwt_string	lib/common/payload.ex	/^  def build_signed_jwt_string(%{} = params, logged_in_user_id \\\\ nil, resource_owner_id \\\\ nil) do$/;"	f
 deps	mix.exs	/^  defp deps do$/;"	f
+ensure_atom_keys	lib/common/payload.ex	/^  def ensure_atom_keys(map) do$/;"	f
 greets the world	test/common_test.exs	/^  test "greets the world" do$/;"	t
-hello	lib/common.ex	/^  def hello do$/;"	f
 project	mix.exs	/^  def project do$/;"	f
