@@ -24,11 +24,24 @@ defmodule Common do
 
   """
   def log(object, level, options \\ []) do
+    msg =
+      case options[:label] do
+        nil ->
+          ""
+
+        "" ->
+          ""
+
+        label ->
+          "#{label}: "
+      end <> inspect(object, options)
+
     case level do
-      :info -> Logger.info(inspect(object, options))
-      :warn -> Logger.warn(inspect(object, options))
-      :error -> Logger.error(inspect(object, options))
-      l -> Logger.warn("loglevel #{inspect(l)} is not known. Object: #{inspect(object, options)}")
+      :debug -> Logger.debug(msg)
+      :info -> Logger.info(msg)
+      :warn -> Logger.warn(msg)
+      :error -> Logger.error(msg)
+      l -> Logger.warn("loglevel #{inspect(l)} is not known. Message: #{msg}")
     end
 
     object
