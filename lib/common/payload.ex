@@ -43,17 +43,40 @@ defmodule Common.Payload do
   Build and sign a jwt-string with merged in `params`.
   """
   def build_signed_jwt_string(%{} = params, logged_in_user_id \\ nil, resource_owner_id \\ nil) do
-    payload = %Common.Payload{
-      service_id: System.get_env("SERVICE_ID"),
-      service_host: System.get_env("SERVICE_HOST"),
-      logged_in_user_id: logged_in_user_id,
-      resource_owner_id: resource_owner_id,
-      claims: params |> ensure_atom_keys()
-    }
+    extra_claims =
+      %Common.Payload{
+        service_id: System.get_env("SERVICE_ID"),
+        service_host: System.get_env("SERVICE_HOST"),
+        logged_in_user_id: logged_in_user_id,
+        resource_owner_id: resource_owner_id,
+        claims: params
+      }
+      |> Common.log(:debug, label: "COMMON build_signed_jwt_string for payload")
 
-    Logger.debug("COMMON build_signed_jwt_string for payload: `#{inspect(payload)}`")
+    token = generate_and_sign(extra_claims)
 
-    payload |> Jason.encode!() |> Base.encode64()
+    {token, extra_claims}
+    |> Common.log(:debug, label: "build_signed_jwt_string returns")
+  end
+
+  def verify_and_validate(token) do
+    signer =
+      Joken.Signer.create(
+        "HS256",
+        System.get_env("JWT_SIGNER") || raise("JWT_SIGNER IS NOT DEFINED")
+      )
+
+    Common.JwtToken.verify_and_validate(token, signer)
+  end
+
+  defp generate_and_sign(extra_claims) do
+    signer =
+      Joken.Signer.create(
+        "HS256",
+        System.get_env("JWT_SIGNER") || raise("JWT_SIGNER IS NOT DEFINED")
+      )
+
+    Common.JwtToken.generate_and_sign!(extra_claims, signer)
   end
 
   @doc """
