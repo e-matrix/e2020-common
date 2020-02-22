@@ -23,8 +23,12 @@ defmodule CommonTest do
   describe "Mocking a service" do
     setup [:start_service_mock]
 
-    test "call_service(payload,service,emie_key)", %{service: service} do
+    test "call_service(payload,service)", %{service: service} do
       assert {:ok, "LOAD"} == call_service(%{pay: "load"}, service)
+    end
+
+    test "call_service(payload,service,emie_key)", %{service: service} do
+      assert {:ok, "LOAD"} == call_service(%{pay: "load"}, service, "emie-key")
     end
 
     defp start_service_mock(_) do
