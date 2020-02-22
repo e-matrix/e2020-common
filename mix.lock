@@ -1,0 +1,5 @@
+%{
+  "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
+  "joken": {:hex, :joken, "2.2.0", "2daa1b12be05184aff7b5ace1d43ca1f81345962285fff3f88db74927c954d3a", [:mix], [{:jose, "~> 1.9", [hex: :jose, repo: "hexpm", optional: false]}], "hexpm"},
+  "jose": {:hex, :jose, "1.10.1", "16d8e460dae7203c6d1efa3f277e25b5af8b659febfc2f2eb4bacf87f128b80a", [:mix, :rebar3], [], "hexpm"},
+}
