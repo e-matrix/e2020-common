@@ -67,6 +67,7 @@ defmodule Common.Payload do
       )
 
     Common.JwtToken.verify_and_validate(token, signer)
+    |> Common.log(:debug, label: "verified_and_validated")
   end
 
   defp generate_and_sign(extra_claims) do
@@ -77,6 +78,7 @@ defmodule Common.Payload do
       )
 
     Common.JwtToken.generate_and_sign!(extra_claims, signer)
+    |> Common.log(:debug, label: "generated and signed with claims")
   end
 
   @doc """
