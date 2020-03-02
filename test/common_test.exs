@@ -3,12 +3,13 @@ defmodule CommonTest do
   doctest Common
 
   import Common.Comm, only: [call_service: 2, call_service: 3]
+  alias Common.Comm
 
-  defmodule PeopleServiceMock do
+  defmodule ServiceMock do
     use GenServer
 
     def start_link(_) do
-      GenServer.start_link(PeopleServiceMock, %{}, name: PeopleServiceMock)
+      GenServer.start_link(ServiceMock, %{}, name: ServiceMock)
     end
 
     def init(state) do
@@ -32,8 +33,18 @@ defmodule CommonTest do
     end
 
     defp start_service_mock(_) do
-      {:ok, pid} = PeopleServiceMock.start_link(%{})
+      {:ok, pid} = ServiceMock.start_link(%{})
       {:ok, %{service: pid}}
+    end
+  end
+
+  describe "Common Communication Helpers" do
+    test "full_qualified_service_node" do
+      System.put_env("EMIE_2020_HELO_SERVICE", "helo@local")
+
+      assert :helo@local == Comm.full_qualified_service_node(Elixir.Helo.ServiceEndpoint)
+
+      System.delete_env("EMIE_2020_HELO_SERVICE")
     end
   end
 
@@ -43,7 +54,8 @@ defmodule CommonTest do
       _endpoints_to_test =
         [
           {People.ServiceEndpoint, :info, {:ok, %{name: "People-Service"}}},
-          {People.ServiceEndpoint, {:full_name, "bob"}, {:ok, "Robert C. Martin"}}
+          {People.ServiceEndpoint, {:full_name, "bob"}, {:ok, "Robert C. Martin"}},
+          {Authentication.ServiceEndpoint, :info, {:ok, %{name: "Authentication-Service"}}}
         ]
         |> Enum.each(fn {service, payload, expected} ->
           assert expected == call_service(payload, service)
