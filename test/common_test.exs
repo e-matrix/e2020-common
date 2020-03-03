@@ -55,7 +55,7 @@ defmodule CommonTest do
       _endpoints_to_test =
         [
           {People.ServiceEndpoint, :info, {:ok, %{name: "People-Service"}}},
-          {People.ServiceEndpoint, {:full_name, "bob"}, {:ok, "Robert C. Martin"}},
+          {People.ServiceEndpoint, {:full_name, %{username: "bob"}}, {:ok, "Robert C. Martin"}},
           {Authentication.ServiceEndpoint, :info, {:ok, %{name: "Authentication-Service"}}}
         ]
         |> Enum.each(fn {service, payload, expected} ->

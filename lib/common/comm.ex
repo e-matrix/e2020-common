@@ -66,12 +66,11 @@ defmodule Common.Comm do
     %{"action" => "#{action}"}
   end
 
-  defp cast_payload({key, param} = payload, service_endpoint, emie_key) when is_tuple(payload) do
-    IO.inspect(payload, label: "CAST PAYLOAD")
-
+  defp cast_payload({key, %{} = params} = payload, service_endpoint, emie_key)
+       when is_tuple(payload) do
     %{
       "action" => "#{key}",
-      "params" => %{"username" => param, "emie_key" => emie_key}
+      "params" => Map.merge(params, %{"emie_key" => emie_key})
     }
   end
 
