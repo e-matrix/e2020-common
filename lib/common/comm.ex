@@ -55,18 +55,28 @@ defmodule Common.Comm do
 
   """
   def full_qualified_service_node(service_name) do
-    ["ELIXIR", srv_name | _] = String.upcase("#{service_name}") |> String.split(".")
+    String.upcase("#{service_name}")
+    |> String.split(".")
+    |> case do
+      [oneword] when is_binary(oneword) ->
+        "EMIE_2020_#{oneword}_SERVICE"
 
-    "EMIE_2020_#{srv_name}_SERVICE"
+      ["ELIXIR", srv_name | _] ->
+        "EMIE_2020_#{srv_name}_SERVICE"
+    end
     |> System.get_env()
+    |> or_default("service_not_defined@local")
     |> String.to_atom()
   end
+
+  defp or_default(nil, default), do: default
+  defp or_default(value, _), do: value
 
   defp cast_payload(action, _service_endpoint, _emie_key) when is_atom(action) do
     %{"action" => "#{action}"}
   end
 
-  defp cast_payload({key, %{} = params} = payload, service_endpoint, emie_key)
+  defp cast_payload({key, %{} = params} = payload, _service_endpoint, emie_key)
        when is_tuple(payload) do
     %{
       "action" => "#{key}",
@@ -74,7 +84,7 @@ defmodule Common.Comm do
     }
   end
 
-  defp cast_payload(payload, service_endpoint, emie_key),
+  defp cast_payload(payload, _service_endpoint, _emie_key),
     do: raise("Invalid payload #{inspect(payload)}")
 
   defp safe_call_service(signed_jwt_string, service_endpoint) do

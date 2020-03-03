@@ -20,6 +20,11 @@ defmodule CommonTest do
     def handle_call(%{pay: load}, _from, state) do
       {:reply, {:ok, String.upcase(load)}, state}
     end
+
+    def handle_call(pl, _from, state) do
+      IO.inspect(pl, label: "MOCK HANDLES")
+      {:reply, {:error, "Unknown payload"}, state}
+    end
   end
 
   describe "Mocking a service" do
@@ -54,11 +59,12 @@ defmodule CommonTest do
     test "Endpoints" do
       _endpoints_to_test =
         [
+          {Authentication.ServiceEndpoint, :info, {:ok, %{name: "Authentication-Service"}}},
           {People.ServiceEndpoint, :info, {:ok, %{name: "People-Service"}}},
-          {People.ServiceEndpoint, {:full_name, %{username: "bob"}}, {:ok, "Robert C. Martin"}},
-          {Authentication.ServiceEndpoint, :info, {:ok, %{name: "Authentication-Service"}}}
+          {People.ServiceEndpoint, {:full_name, %{username: "bob"}}, {:ok, "Robert C. Martin"}}
         ]
-        |> Enum.each(fn {service, payload, expected} ->
+        |> Enum.each(fn {service, payload, expected} = line ->
+          IO.inspect(line, label: "TEST")
           assert expected == call_service(payload, service)
         end)
     end

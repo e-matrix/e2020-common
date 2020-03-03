@@ -1,1 +1,0 @@
-JWT_SIGNER=XXDEVXXXXXMODEXXXXXXXXDEVXXXXXMODEXXXXX iex --name e2020-common@abuntu.local --exit -S mix test --trace --include integration

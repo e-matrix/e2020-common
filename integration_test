@@ -1,0 +1,5 @@
+EMIE_2020_AUTHENTICATION_SERVICE=e2020-authentication@abuntu.local \
+EMIE_2020_PEOPLE_SERVICE=e2020-people@abuntu.local \
+EMIE_2020_FRONTEND_SERVICE=e2020-frontend@abuntu.local \
+JWT_SIGNER=XXDEVXXXXXMODEXXXXXXXXDEVXXXXXMODEXXXXX \
+  iex --name e2020-common@abuntu.local --halt -S mix test --trace --include integration
