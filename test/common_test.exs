@@ -4,6 +4,7 @@ defmodule CommonTest do
 
   import Common.Comm, only: [call_service: 2, call_service: 3]
   alias Common.Comm
+  alias Common.Payload
 
   defmodule ServiceMock do
     use GenServer

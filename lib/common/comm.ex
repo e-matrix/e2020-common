@@ -1,13 +1,19 @@
 defmodule Common.Comm do
   @moduledoc """
   Common Communication Module for e2020
+
+
+  `call_service(....)`
   """
 
   alias Common.Payload
 
   @doc """
-  Call a GenServer in a remote application
+  Call a GenServer in a remote application or locally if the worker is a pid.
+
   """
+  @spec call_service(map() | tuple() | :atom, :atom | pid(), String.t()) ::
+          {:ok, term} | {:error, String.t()}
   def call_service(payload, service_endpoint, emie_key \\ nil)
 
   def call_service(payload, local_worker, _emie_key) when is_pid(local_worker) do
@@ -37,7 +43,10 @@ defmodule Common.Comm do
   end
 
   @doc """
-  Return the service endpoint address for the given `service_name`
+  Return the service endpoint address for the given `service_name`.
+  There must be a system env, named `EMIE_2020_servicename_SERVICE`.
+  If this env exists, it will be returned as an atom. Otherwise an
+  exception will raise.
 
   ### Example
 
@@ -53,23 +62,21 @@ defmodule Common.Comm do
     |> String.to_atom()
   end
 
-  def full_qualified_service_node(local), do: local
-
-  defp cast_payload(payload, service_endpoint, emie_key) do
-    cond do
-      is_atom(payload) ->
-        %{"action" => "#{payload}"}
-
-      is_tuple(payload) ->
-        %{
-          "action" => "#{elem(payload, 0)}",
-          "params" => %{"username" => elem(payload, 1), "emie_key" => emie_key}
-        }
-
-      true ->
-        raise "Invalid payload #{inspect(payload)}"
-    end
+  defp cast_payload(action, _service_endpoint, _emie_key) when is_atom(action) do
+    %{"action" => "#{action}"}
   end
+
+  defp cast_payload({key, param} = payload, service_endpoint, emie_key) when is_tuple(payload) do
+    IO.inspect(payload, label: "CAST PAYLOAD")
+
+    %{
+      "action" => "#{key}",
+      "params" => %{"username" => param, "emie_key" => emie_key}
+    }
+  end
+
+  defp cast_payload(payload, service_endpoint, emie_key),
+    do: raise("Invalid payload #{inspect(payload)}")
 
   defp safe_call_service(signed_jwt_string, service_endpoint) do
     signed_jwt_string
