@@ -3,8 +3,9 @@ defmodule CommonTest do
   doctest Common
 
   import Common.Comm, only: [call_service: 2, call_service: 3]
+  import ExUnit.CaptureIO
+
   alias Common.Comm
-  alias Common.Payload
 
   defmodule ServiceMock do
     use GenServer
@@ -51,6 +52,52 @@ defmodule CommonTest do
       assert :helo@local == Comm.full_qualified_service_node(Elixir.Helo.ServiceEndpoint)
 
       System.delete_env("EMIE_2020_HELO_SERVICE")
+    end
+  end
+
+  describe "Global functions" do
+    test "output logs if EMIE_2020_LOG_ON is set" do
+      old = System.get_env("EMIE_2020_LOG_ON")
+
+      # When the env var is set
+      System.put_env("EMIE_2020_LOG_ON", "yes")
+
+      # And we use our log-function
+      output =
+        capture_io(fn ->
+          Common.log("Something", :debug)
+        end)
+
+      # Then we should see an output
+      assert "\nLOG-debug : \"Something\"\n" == output
+
+      # Reset environment
+      System.delete_env("EMIE_2020_LOG_ON")
+
+      if old do
+        System.put_env("EMIE_2020_LOG_ON", old)
+      end
+    end
+
+    test "don't output logs if EMIE_2020_LOG_ON isn't set" do
+      old = System.get_env("EMIE_2020_LOG_ON")
+
+      # When the env var is not set (nil)
+      System.delete_env("EMIE_2020_LOG_ON")
+
+      # And we use our log function
+      output =
+        capture_io(fn ->
+          Common.log("Something", :debug)
+        end)
+
+      # Then we shouldn't see any output
+      assert "" == output
+
+      # Reset environment if it was set before
+      if old do
+        System.put_env("EMIE_2020_LOG_ON", old)
+      end
     end
   end
 

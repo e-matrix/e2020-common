@@ -13,6 +13,10 @@ defmodule Common do
   So, this little helper wraps the object being logged and returns it, thus you
   can use it in pipes.
 
+  **Setup/Config**
+
+  Set env var `EMIE_2020_LOG_ON=yes`
+
   ### Example:
 
       iex> object = {:a,:b,:c}
@@ -21,26 +25,13 @@ defmodule Common do
 
   """
   def log(object, level, options \\ []) do
-    msg =
-      case options[:label] do
-        nil ->
-          ""
+    on? = System.get_env("EMIE_2020_LOG_ON") == "yes"
 
-        "" ->
-          ""
-
-        label ->
-          "#{label}: "
-      end <> inspect(object, options)
-
-    case level do
-      :debug -> Logger.debug(msg)
-      :info -> Logger.info(msg)
-      :warn -> Logger.warn(msg)
-      :error -> Logger.error(msg)
-      l -> Logger.warn("loglevel #{inspect(l)} is not known. Message: #{msg}")
+    if on? do
+      label = "\nLOG-#{level} " <> Keyword.get(options, :label, "")
+      IO.inspect(object, label: label)
+    else
+      object
     end
-
-    object
   end
 end
