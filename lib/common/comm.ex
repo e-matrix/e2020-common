@@ -72,16 +72,16 @@ defmodule Common.Comm do
   defp or_default(nil, default), do: default
   defp or_default(value, _), do: value
 
-  defp cast_payload(action, _service_endpoint, _emie_key) when is_atom(action) do
-    %{"action" => "#{action}"}
-  end
-
   defp cast_payload({key, %{} = params} = payload, _service_endpoint, emie_key)
        when is_tuple(payload) do
     %{
       "action" => "#{key}",
       "params" => Map.merge(params, %{"emie_key" => emie_key})
     }
+  end
+
+  defp cast_payload(action, _service_endpoint, _emie_key) when is_atom(action) do
+    %{"action" => "#{action}"}
   end
 
   defp cast_payload(payload, _service_endpoint, _emie_key),
@@ -91,7 +91,7 @@ defmodule Common.Comm do
     signed_jwt_string
     |> case do
       {:error, reason} ->
-        Common.log(:error, reason, label: "Can't sign payload")
+        Common.log({:error, reason}, label: "Can't sign payload")
 
       payload ->
         Common.log(payload, :debug, label: "Signed payload")
@@ -100,7 +100,6 @@ defmodule Common.Comm do
           {service_endpoint, full_qualified_service_node(service_endpoint)},
           payload
         )
-        |> Payload.unpack_signed_jwt_string()
         |> Common.log(:debug, label: "Verified jwt-string (#{service_endpoint})")
     end
   end
