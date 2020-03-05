@@ -110,7 +110,7 @@ defmodule CommonTest do
           {People.ServiceEndpoint, :info, {:ok, {:ok, %{name: "People-Service"}}}},
           {People.ServiceEndpoint, {:full_name, %{username: "bob"}}, {:ok, "Robert C. Martin"}}
         ]
-        |> Enum.each(fn {service, payload, expected} = line ->
+        |> Enum.each(fn {service, payload, expected} ->
           assert expected == call_service(payload, service)
         end)
     end
