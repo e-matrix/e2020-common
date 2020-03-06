@@ -11,6 +11,29 @@ defmodule Common.Comm do
   @doc """
   Call a GenServer in a remote application or locally if the worker is a pid.
 
+  There are two types matching this function. The first one is for a single query or
+  command with no parameters. Other than that, there is a form where the first param
+  is a tuple of `{ :action_key, %{ ..params.. }}`.
+
+  **Form 1 - query, command with no params**
+
+      call_service(:something_the_service_knows, ServiceEndpoint, emie_key)
+
+  **Form 2 - query, command with params**
+
+      call_service({:something_the_service_knows, %{ "p1" => "v1", ....}}, ServiceEndpoint, emie_key)
+
+  The _ServiceEndpoint_ can either be
+
+    - a module where the service endpoint is defined
+    - a pid where the endpoint's GenServer is running
+
+  ### Examples
+
+      iex> call_service(:info, People.ServiceEndpoint, "mycurrentusername")
+
+      iex> call_service({:full_name, %{ "username" => "bob" }}, People.ServiceEndpoint, "mycurrentusername")
+
   """
   @spec call_service(map() | tuple() | :atom, :atom | pid(), String.t()) ::
           {:ok, term} | {:error, String.t()}
