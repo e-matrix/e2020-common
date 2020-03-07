@@ -1,6 +1,6 @@
-# Common
+# E2020 Common
 
-**A library full of common stuff used by all e2020 modules**
+**Common elixir module for e2020 projects**
 
 ## Installation
 
@@ -10,7 +10,7 @@ in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:common, path: "../e2020-common"}
+    {:common, git: "git@github.com:e-matrix/e2020-common.git"}
   ]
 end
 ```

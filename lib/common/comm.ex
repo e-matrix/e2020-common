@@ -113,8 +113,8 @@ defmodule Common.Comm do
   defp safe_call_service(signed_jwt_string, service_endpoint) do
     signed_jwt_string
     |> case do
-      {:error, reason} ->
-        Common.log({:error, reason}, label: "Can't sign payload")
+      {:error, reason} = err ->
+        Common.log(err, :debug, label: "Can't sign payload")
 
       payload ->
         Common.log(payload, :debug, label: "Signed payload")
@@ -123,7 +123,7 @@ defmodule Common.Comm do
           {service_endpoint, full_qualified_service_node(service_endpoint)},
           payload
         )
-        |> Common.log(:debug, label: "Verified jwt-string (#{service_endpoint})")
+        |> Common.log(:debug, label: "#{inspect(service_endpoint)} responds")
     end
   end
 end
