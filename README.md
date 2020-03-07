@@ -10,7 +10,7 @@ in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:common, git: "git@github.com:e-matrix/e2020-common.git"}
+    {:common, git: "https://github.com/e-matrix/e2020-common.git"}
   ]
 end
 ```
