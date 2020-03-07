@@ -1,5 +1,5 @@
-EMIE_2020_AUTHENTICATION_SERVICE=e2020-authentication@abuntu.local \
-EMIE_2020_PEOPLE_SERVICE=e2020-people@abuntu.local \
-EMIE_2020_FRONTEND_SERVICE=e2020-frontend@abuntu.local \
+EMIE_2020_AUTHENTICATION_SERVICE=authentication@authentication.local \
+EMIE_2020_PEOPLE_SERVICE=people@people.local \
+EMIE_2020_FRONTEND_SERVICE=frontend@frontend.local \
 JWT_SIGNER=$SECRET_KEY_BASE \
-  iex --cookie $SECRET_KEY_BASE --name e2020-common@abuntu.local --halt -S mix test --trace --include integration
+  iex --cookie $SECRET_KEY_BASE --name common@common.local --halt -S mix test --trace --include integration
