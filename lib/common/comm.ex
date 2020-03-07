@@ -90,6 +90,7 @@ defmodule Common.Comm do
     |> System.get_env()
     |> or_default("service_not_defined@local")
     |> String.to_atom()
+    |> IO.inspect(label: "Using FQSN")
   end
 
   defp or_default(nil, default), do: default
@@ -113,7 +114,7 @@ defmodule Common.Comm do
   defp safe_call_service(signed_jwt_string, service_endpoint) do
     signed_jwt_string
     |> case do
-      {:error, reason} = err ->
+      {:error, _reason} = err ->
         Common.log(err, :debug, label: "Can't sign payload")
 
       payload ->
