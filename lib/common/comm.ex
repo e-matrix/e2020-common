@@ -90,7 +90,6 @@ defmodule Common.Comm do
     |> System.get_env()
     |> or_default("service_not_defined@local")
     |> String.to_atom()
-    |> IO.inspect(label: "Using FQSN")
   end
 
   defp or_default(nil, default), do: default
