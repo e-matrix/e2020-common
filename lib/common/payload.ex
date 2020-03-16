@@ -101,7 +101,7 @@ defmodule Common.Payload do
 
   def unpack_signed_jwt_string(request_model) do
     {:error,
-     "request_model is not a valid. It should be an jwt-string or a response-tuple. " <>
+     "request_model is not valid. It should be an jwt-string or a response-tuple. " <>
        "Request was: `#{inspect(request_model)}"}
   end
 
