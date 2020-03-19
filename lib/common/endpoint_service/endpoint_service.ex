@@ -75,6 +75,8 @@ defmodule Common.EndpointService do
       @impl true
       def handle_call({token, %Payload{claims: predicted_claims}}, from, state)
           when is_binary(token) do
+        IO.inspect(state, label: "handle_call {token,pl}")
+
         token
         |> Payload.verify_and_validate()
         |> Common.log(:debug, label: "Validated")
@@ -87,6 +89,12 @@ defmodule Common.EndpointService do
             Common.log(reason, :error, label: "Can't verify token")
             {:reply, {:error, "JWT verify failed with #{inspect(reason)}"}, state}
         end
+      end
+
+      @impl true
+      def handle_call(msg, _from, state) do
+        IO.inspect(msg, label: "Unhandled message")
+        {:reply, {:error, "unhandled message #{inspect(msg)}"}, state}
       end
     end
   end
