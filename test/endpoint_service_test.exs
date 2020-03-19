@@ -11,6 +11,8 @@ defmodule EndpointServiceTest do
     def info() do
       %{name: "#{__MODULE__}"}
     end
+
+    def handle(:info, _, s), do: {:reply, {:ok, info()}, s}
   end
 
   @endpoint EndpointServiceTest.MyEndpointService

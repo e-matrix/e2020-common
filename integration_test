@@ -1,4 +1,4 @@
 #!/bin/bash
 
 source $EMIE_2020/e2020-orchestration/env/global
-iex --cookie $COOKIE --name common@e2020.local --halt -S mix test --trace --include integration
+iex --cookie $COOKIE --name common@e2020.local --halt -S mix test --trace --include integration $*

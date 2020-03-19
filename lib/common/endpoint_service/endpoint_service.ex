@@ -30,6 +30,11 @@ defmodule Common.EndpointService do
   """
   @callback info() :: Map.t()
 
+  @doc """
+  Implement handle-functions for your implementation.
+  """
+  @callback handle(Map.t(), pid() | tuple(), any()) :: {:ok, any()} | {:error, String.t()}
+
   defmacro __using__(opts) do
     quote do
       @moduledoc """
@@ -55,7 +60,7 @@ defmodule Common.EndpointService do
       def start_link(_) do
         name = unquote(opts[:name])
 
-        GenServer.start_link(name, %{})
+        GenServer.start_link(__MODULE__, %{}, name: name)
       end
 
       @doc "Default init sets empty state `%{}`"
@@ -64,7 +69,7 @@ defmodule Common.EndpointService do
 
       @doc "call `:info` does nothing than calls your implementation of `info/1`"
       @impl true
-      def handle_call(:info, _from, state) do
+      def handle(%{"action" => "info"}, _from, state) do
         {:reply, {:ok, info()}, state}
       end
 
@@ -75,15 +80,13 @@ defmodule Common.EndpointService do
       @impl true
       def handle_call({token, %Payload{claims: predicted_claims}}, from, state)
           when is_binary(token) do
-        IO.inspect(state, label: "handle_call {token,pl}")
-
         token
         |> Payload.verify_and_validate()
         |> Common.log(:debug, label: "Validated")
         |> case do
           {:ok, %{"claims" => claims}} ->
             Common.log({predicted_claims, claims}, :debug, label: "{predicted, verified}")
-            handle_call(claims, from, state)
+            unquote(opts[:name]).handle(claims, from, state)
 
           {:error, reason} ->
             Common.log(reason, :error, label: "Can't verify token")
@@ -92,10 +95,7 @@ defmodule Common.EndpointService do
       end
 
       @impl true
-      def handle_call(msg, _from, state) do
-        IO.inspect(msg, label: "Unhandled message")
-        {:reply, {:error, "unhandled message #{inspect(msg)}"}, state}
-      end
+      def handle_call(msg, from, state), do: handle(msg, from, state)
     end
   end
 end
