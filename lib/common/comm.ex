@@ -40,16 +40,9 @@ defmodule Common.Comm do
   def call_service(payload, service_endpoint, emie_key \\ nil)
 
   def call_service(payload, local_worker, _emie_key) when is_pid(local_worker) do
-    case GenServer.whereis(local_worker) do
-      nil ->
-        {:error, :node_down}
-        |> Common.log(:debug, label: "Service called: #{inspect(local_worker)}")
-
-      pid ->
-        GenServer.call(pid, payload)
-        |> Payload.unpack_signed_jwt_string()
-        |> Common.log(:debug, label: "Verified jwt-string (local_worker)")
-    end
+    GenServer.call(local_worker, payload)
+    |> Payload.unpack_signed_jwt_string()
+    |> Common.log(:debug, label: "Verified jwt-string (local_worker)")
   end
 
   def call_service(payload, service_endpoint, emie_key) do
