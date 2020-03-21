@@ -108,6 +108,7 @@ defmodule CommonTest do
         [
           {Authentication.ServiceEndpoint, :info,
            {:ok, {:ok, %{name: "Authentication-Service"}}}},
+          {Registration.ServiceEndpoint, :info, {:ok, {:ok, %{name: "Registration-Service"}}}},
           {People.ServiceEndpoint, :info, {:ok, {:ok, %{name: "People-Service"}}}},
           {People.ServiceEndpoint, {:full_name, %{username: "bob"}},
            {:ok, {:ok, "Robert C. Martin"}}}
